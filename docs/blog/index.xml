@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on 1.01</title>
-    <link>http://example.org/blog/</link>
+    <link>https://dempkow.ski/blog/</link>
     <description>Recent content in Blogs on 1.01</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 20 Oct 2017 23:00:15 -0400</lastBuildDate>
     
-	<atom:link href="http://example.org/blog/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://dempkow.ski/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle</title>
-      <link>http://example.org/blog/java-completablefuture-exception-handling/</link>
+      <link>https://dempkow.ski/blog/java-completablefuture-exception-handling/</link>
       <pubDate>Fri, 20 Oct 2017 23:00:15 -0400</pubDate>
       
-      <guid>http://example.org/blog/java-completablefuture-exception-handling/</guid>
+      <guid>https://dempkow.ski/blog/java-completablefuture-exception-handling/</guid>
       <description>Today I learned about the behavior of thrown exceptions within asynchronous code using Java&amp;rsquo;s CompletableFutures.
 The question I had was:
  Is it possible to have a CompletableFuture which calls something like .handle(), but returns Void?

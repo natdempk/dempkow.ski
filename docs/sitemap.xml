@@ -3,34 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://example.org/about/</loc>
+    <loc>https://dempkow.ski/about/</loc>
     <lastmod>2017-10-21T00:00:19-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/blog/java-completablefuture-exception-handling/</loc>
+    <loc>https://dempkow.ski/blog/java-completablefuture-exception-handling/</loc>
     <lastmod>2017-10-20T23:00:15-04:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/</loc>
+    <loc>https://dempkow.ski/</loc>
     <lastmod>2017-10-21T00:00:19-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/blog/</loc>
+    <loc>https://dempkow.ski/blog/</loc>
     <lastmod>2017-10-20T23:00:15-04:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/categories/</loc>
+    <loc>https://dempkow.ski/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/tags/</loc>
+    <loc>https://dempkow.ski/tags/</loc>
     <priority>0</priority>
   </url>
   

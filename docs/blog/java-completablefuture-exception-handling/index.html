@@ -24,7 +24,7 @@ The question I had was:
 I had written something like:
 CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle((i, err) -&gt; { if (err !" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://example.org/blog/java-completablefuture-exception-handling/" />
+<meta property="og:url" content="https://dempkow.ski/blog/java-completablefuture-exception-handling/" />
 
 
 
@@ -49,7 +49,7 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
      Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle 
 
 </title>
-<link rel="canonical" href="http://example.org/blog/java-completablefuture-exception-handling/">
+<link rel="canonical" href="https://dempkow.ski/blog/java-completablefuture-exception-handling/">
 
 
 
@@ -67,9 +67,9 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
 
 
     
-    <link rel="stylesheet" href="http://example.org/css/reset.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
-    <link rel="stylesheet" href="http://example.org/css/pygments.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
-    <link rel="stylesheet" href="http://example.org/css/main.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
+    <link rel="stylesheet" href="https://dempkow.ski/css/reset.css?t=2017-10-21%2001%3a26%3a08.741243%20-0400%20EDT%20m%3d%2b0.090214000">
+    <link rel="stylesheet" href="https://dempkow.ski/css/pygments.css?t=2017-10-21%2001%3a26%3a08.741243%20-0400%20EDT%20m%3d%2b0.090214000">
+    <link rel="stylesheet" href="https://dempkow.ski/css/main.css?t=2017-10-21%2001%3a26%3a08.741243%20-0400%20EDT%20m%3d%2b0.090214000">
     
 
 
@@ -77,7 +77,7 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
 
 <link rel="shortcut icon"
 
-    href="http://example.org/img/favicon.ico"
+    href="https://dempkow.ski/img/favicon.ico"
 
 >
 
@@ -93,14 +93,14 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
     <div class="container">
         <div class="content">
             
-            <a href="http://example.org/"><div class="name">Nat Dempkowski</div></a>
+            <a href="https://dempkow.ski/"><div class="name">Nat Dempkowski</div></a>
             
             <nav>
                 <ul>
                     
-                        <li class="nav-blog"><a href="http://example.org/blog/"><span>Blog</span></a></li>
+                        <li class="nav-blog"><a href="https://dempkow.ski/blog/"><span>Blog</span></a></li>
                     
-                        <li class="nav-about"><a href="http://example.org/about/"><span>About</span></a></li>
+                        <li class="nav-about"><a href="https://dempkow.ski/about/"><span>About</span></a></li>
                     
                 </ul>
             </nav>
@@ -113,15 +113,11 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
         <div class="content">
 
         
-            <a href="//github.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="http://example.org/img/github.svg" alt="github" /></a>
+            <a href="//github.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="https://dempkow.ski/img/github.svg" alt="github" /></a>
         
 
         
-            <a href="//twitter.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="http://example.org/img/twitter.svg" alt="twitter" /></a>
-        
-
-        
-
+            <a href="//twitter.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="https://dempkow.ski/img/twitter.svg" alt="twitter" /></a>
         
 
         
@@ -131,11 +127,15 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
         
 
         
-            <a href="mailto:n@dempkow.ski"><img class="icon" src="http://example.org/img/email.svg" alt="email" /></a>
+
         
 
         
-            <a href="http://example.org/index.xml"><img class="icon" src="http://example.org/img/rss.svg" alt="rss" /></a>
+            <a href="mailto:n@dempkow.ski"><img class="icon" src="https://dempkow.ski/img/email.svg" alt="email" /></a>
+        
+
+        
+            <a href="https://dempkow.ski/index.xml"><img class="icon" src="https://dempkow.ski/img/rss.svg" alt="rss" /></a>
         
         
         </div>
@@ -154,7 +154,7 @@ CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle
 
 </div>
 
-                    <div class="initials"><a href="http://example.org/"></a></div>
+                    <div class="initials"><a href="https://dempkow.ski/"></a></div>
                 </div>
                 <div class="meta">
                     
@@ -267,7 +267,7 @@ Exception in thread &quot;main&quot; java.util.concurrent.CompletionException: j
 </ol>
 
                 <br>
-		<p><a href="http://example.org/blog/">Back to posts</a></p>
+		<p><a href="https://dempkow.ski/blog/">Back to posts</a></p>
             </div>
             <br>
             <div class="disqus">

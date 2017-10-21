@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<meta name="author" content="Nat Dempkowski">
+<meta name="description" content="Today I learned about the behavior of thrown exceptions within asynchronous code using Java&rsquo;s CompletableFutures.
+The question I had was:
+ Is it possible to have a CompletableFuture which calls something like .handle(), but returns Void?
+ I was writing code that wanted to basically handle exceptional cases, but not propagate those exceptions outwards.
+I had written something like:
+CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle((i, err) -&gt; { if (err !">
+
+<meta property="og:title" content="Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle" />
+<meta property="og:description" content="Today I learned about the behavior of thrown exceptions within asynchronous code using Java&rsquo;s CompletableFutures.
+The question I had was:
+ Is it possible to have a CompletableFuture which calls something like .handle(), but returns Void?
+ I was writing code that wanted to basically handle exceptional cases, but not propagate those exceptions outwards.
+I had written something like:
+CompletableFuture.supplyAsync(() -&gt; { throw new RuntimeException(); }).handle((i, err) -&gt; { if (err !" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/blog/java-completablefuture-exception-handling/" />
+
+
+
+<meta property="article:published_time" content="2017-10-20T23:00:15-04:00"/>
+
+<meta property="article:modified_time" content="2017-10-20T23:00:15-04:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+<title>
+
+
+     Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle 
+
+</title>
+<link rel="canonical" href="http://example.org/blog/java-completablefuture-exception-handling/">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:500">
+
+
+
+    
+    <link rel="stylesheet" href="http://example.org/css/reset.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
+    <link rel="stylesheet" href="http://example.org/css/pygments.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
+    <link rel="stylesheet" href="http://example.org/css/main.css?t=2017-10-21%2001%3a18%3a17.952416%20-0400%20EDT%20m%3d%2b0.046687771">
+    
+
+
+
+
+<link rel="shortcut icon"
+
+    href="http://example.org/img/favicon.ico"
+
+>
+
+
+
+
+</head>
+
+
+<body lang="">
+
+<section class="header">
+    <div class="container">
+        <div class="content">
+            
+            <a href="http://example.org/"><div class="name">Nat Dempkowski</div></a>
+            
+            <nav>
+                <ul>
+                    
+                        <li class="nav-blog"><a href="http://example.org/blog/"><span>Blog</span></a></li>
+                    
+                        <li class="nav-about"><a href="http://example.org/about/"><span>About</span></a></li>
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="icons">
+    <div class="container">
+        <div class="content">
+
+        
+            <a href="//github.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="http://example.org/img/github.svg" alt="github" /></a>
+        
+
+        
+            <a href="//twitter.com/natdempk" target="_blank" rel="noopener"><img class="icon" src="http://example.org/img/twitter.svg" alt="twitter" /></a>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+            <a href="mailto:n@dempkow.ski"><img class="icon" src="http://example.org/img/email.svg" alt="email" /></a>
+        
+
+        
+            <a href="http://example.org/index.xml"><img class="icon" src="http://example.org/img/rss.svg" alt="rss" /></a>
+        
+        
+        </div>
+    </div>
+</section>
+
+
+<section class="main post non-narrow zero-top-spacing">
+    <div class="container">
+        <div class="content">
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
+
+    Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle
+
+</div>
+
+                    <div class="initials"><a href="http://example.org/"></a></div>
+                </div>
+                <div class="meta">
+                    
+                    <div class="date" title='Fri Oct 20 2017 23:00:15 EDT'>Oct 20, 2017</div>
+                    
+                    
+		    <div class="reading-time"><div class="middot"></div>3 minutes read</div>
+                    
+                </div>
+            </div>
+            <div class="markdown">
+                <p>Today I learned about the behavior of thrown exceptions within asynchronous code using Java&rsquo;s CompletableFutures.</p>
+
+<p>The question I had was:</p>
+
+<blockquote>
+<p>Is it possible to have a CompletableFuture which calls something like <code>.handle()</code>, but returns <code>Void</code>?</p>
+</blockquote>
+
+<p>I was writing code that wanted to basically handle exceptional cases, but not propagate those exceptions outwards.</p>
+
+<p>I had written something like:</p>
+
+<pre><code class="language-java">CompletableFuture.supplyAsync(() -&gt; {
+  throw new RuntimeException();
+}).handle((i, err) -&gt; {
+  if (err != null) {
+    throw new RuntimeException(err);
+  } else {
+    System.out.println(i);
+    return i;
+  }
+}).join();
+</code></pre>
+
+<p>And since <code>handle</code> is defined as taking in a <code>BiFunction: (T, Throwable) -&gt; U</code>:</p>
+
+<pre><code class="language-java">&lt;U&gt; CompletableFuture&lt;U&gt; handle(BiFunction&lt;? super T,Throwable,? extends U&gt; fn)
+</code></pre>
+
+<p>We&rsquo;re stuck with an unnecessary <code>return i</code> in our code, even though we don&rsquo;t care about the result of the <code>handle</code>. In this case we&rsquo;re just logging on success. The question was then raised:</p>
+
+<blockquote>
+<p>Why not use <code>whenComplete</code>?</p>
+</blockquote>
+
+<p>Whose signature looks like:</p>
+
+<pre><code class="language-java">CompletableFuture&lt;T&gt; whenComplete(BiConsumer&lt;? super T,? super Throwable&gt; action)
+</code></pre>
+
+<p>And well, for one that doesn&rsquo;t actually solve my problem, as I still need to return something out of the <code>whenComplete</code>, but it also raised the question of what would happen in the exceptional case, and why do these two seemingly similar methods even exist?</p>
+
+<p>The answer here is somewhat that they handle errors differently. If we look at the <em>totally clear</em> JavaDocs for <code>handle</code>:</p>
+
+<blockquote>
+<p>When this stage is complete, the given function is invoked with the result (or null if none) and the exception (or null if none) of this stage as arguments, and the function&rsquo;s result is used to complete the returned stage.</p>
+</blockquote>
+
+<p>and for <code>whenComplete</code>:</p>
+
+<blockquote>
+<p>When this stage is complete, the given action is invoked with the result (or null if none) and the exception (or null if none) of this stage as arguments. The returned stage is completed when the action returns. If the supplied action itself encounters an exception, then the returned stage exceptionally completes with this exception unless this stage also completed exceptionally.</p>
+</blockquote>
+
+<p>It&rsquo;s totally clear what happens right? I mean from reading those two blurbs I&rsquo;m sure you could easily predict the result of this snippet:</p>
+
+<pre><code class="language-java">CompletableFuture.supplyAsync(() -&gt; {
+  throw new RuntimeException(&quot;1&quot;);
+}).whenComplete((i, err) -&gt; {
+  System.out.println(&quot;hello&quot;);
+  throw new RuntimeException(&quot;2&quot;);
+}).join();
+</code></pre>
+
+<p>You might assume that you&rsquo;d get back <code>RuntimeException(&quot;2&quot;)</code> since thats the last thing thrown in the chain, and it seems like <code>whenComplete</code> takes in an error, so that&rsquo;s probably not just hanging around, right? Well, if we run the code we see:</p>
+
+<pre><code class="language-java">hello
+Exception in thread &quot;main&quot; java.util.concurrent.CompletionException: java.lang.RuntimeException: 1
+	at java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:273)
+	at java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:280)
+	at java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1592)
+</code></pre>
+
+<p>What even happened here to see this output? We see <code>hello</code>, so we know that the code from the <code>whenComplete</code> block executed, but that exception looks like it&rsquo;s from the <code>supplyAsync</code> call. So not only did our second exception simply disappear, but <code>whenComplete</code> also wrapped our inital exception in a <code>CompletionException</code>. Fantastic.</p>
+
+<p>Imagine if we had wanted to handle that error somehow, and done something like:</p>
+
+<pre><code class="language-java">CompletableFuture.supplyAsync(() -&gt; {
+  throw new RuntimeException(&quot;1&quot;);
+  return 1;
+}).whenComplete((i, err) -&gt; {
+  if (err != null) {
+    throw new IllegalArgumentException(err.getMessage());
+  }
+}).join();
+</code></pre>
+
+<p>Well again, all we&rsquo;re going to get back is our original exception:</p>
+
+<pre><code>Exception in thread &quot;main&quot; java.util.concurrent.CompletionException: java.lang.RuntimeException: 1
+</code></pre>
+
+<p>So what did we learn?</p>
+
+<ol>
+<li>There doesn&rsquo;t seem to be a great way to handle exceptions while returning <code>CompletableFuture&lt;Void&gt;</code></li>
+<li>If we want to actually handle any errors specially, we need to use <code>handle</code> which explicitly doesn&rsquo;t propagate errors for us, instead allowing us to take action on errors explicitly. This means we can either squash them, or propagate changed versions of them.</li>
+<li><code>CompletionException</code>s are basically going to spring up in our code when using <code>CompletableFuture</code>s and there&rsquo;s not a whole lot we can do about it, besides liberally using <code>handle</code>? We can also use <code>exceptionally</code> to deal with this problem, but we can save that for another post.</li>
+</ol>
+
+                <br>
+		<p><a href="http://example.org/blog/">Back to posts</a></p>
+            </div>
+            <br>
+            <div class="disqus">
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+  
+
+  <script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+  </script>
+
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,35 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+theme = "cocoa"
+
+canonifyurls = true
+builddrafts = false
+
+contentdir = "content"
+layoutdir = "layouts"
+publishdir = "public"
+title = "1.01"
+author = "Nat Dempkowski"
+pygmentsuseclasses = true
+
+[[menu.main]]
+name = "Blog"
+weight = -120
+identifier = "blog"
+url = "/blog/"
+
+
+[[menu.main]]
+name = "About"
+weight = -110
+identifier = "about"
+url = "/about/"
+
+[params]
+author = "Nat Dempkowski"
+email = "n@dempkow.ski"
+github = "//github.com/natdempk"
+twitter = "//twitter.com/natdempk"
+description = "test desc"
+highlightjs = true
+cachebuster = true

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dempkow.ski</title>
+    <link>//localhost:1313/</link>
+    <description>Recent content on dempkow.ski</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 20 Oct 2017 23:00:15 -0400</lastBuildDate><atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java&#39;s CompleteableFuture exception handling: whenComplete vs. handle</title>
+      <link>//localhost:1313/blog/java-completablefuture-exception-handling/</link>
+      <pubDate>Fri, 20 Oct 2017 23:00:15 -0400</pubDate>
+      
+      <guid>//localhost:1313/blog/java-completablefuture-exception-handling/</guid>
+      <description>&lt;p&gt;Today I learned about the behavior of thrown exceptions within asynchronous code using Java&amp;rsquo;s CompletableFutures.&lt;/p&gt;
+&lt;p&gt;The question I had was:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Is it possible to have a CompletableFuture which calls something like &lt;code&gt;.handle()&lt;/code&gt;, but returns &lt;code&gt;Void&lt;/code&gt;?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I was writing code that wanted to basically handle exceptional cases, but not propagate those exceptions outwards.&lt;/p&gt;
+&lt;p&gt;I had written something like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;supplyAsync&lt;/span&gt;(() &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;handle&lt;/span&gt;((i, err) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (err &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException(err);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(i);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; i;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;join&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And since &lt;code&gt;handle&lt;/code&gt; is defined as taking in a &lt;code&gt;BiFunction: (T, Throwable) -&amp;gt; U&lt;/code&gt;:&lt;/p&gt;</description>
+      <content>&lt;p&gt;Today I learned about the behavior of thrown exceptions within asynchronous code using Java&amp;rsquo;s CompletableFutures.&lt;/p&gt;
+&lt;p&gt;The question I had was:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Is it possible to have a CompletableFuture which calls something like &lt;code&gt;.handle()&lt;/code&gt;, but returns &lt;code&gt;Void&lt;/code&gt;?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I was writing code that wanted to basically handle exceptional cases, but not propagate those exceptions outwards.&lt;/p&gt;
+&lt;p&gt;I had written something like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;supplyAsync&lt;/span&gt;(() &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;handle&lt;/span&gt;((i, err) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (err &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException(err);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(i);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; i;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;join&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And since &lt;code&gt;handle&lt;/code&gt; is defined as taking in a &lt;code&gt;BiFunction: (T, Throwable) -&amp;gt; U&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; CompletableFuture&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;handle&lt;/span&gt;(BiFunction&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;super&lt;/span&gt; T,Throwable,&lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;extends&lt;/span&gt; U&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; fn)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We&amp;rsquo;re stuck with an unnecessary &lt;code&gt;return i&lt;/code&gt; in our code, even though we don&amp;rsquo;t care about the result of the &lt;code&gt;handle&lt;/code&gt;. In this case we&amp;rsquo;re just logging on success. The question was then raised:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Why not use &lt;code&gt;whenComplete&lt;/code&gt;?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Whose signature looks like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CompletableFuture&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;whenComplete&lt;/span&gt;(BiConsumer&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;super&lt;/span&gt; T,&lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;super&lt;/span&gt; Throwable&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; action)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And well, for one that doesn&amp;rsquo;t actually solve my problem, as I still need to return something out of the &lt;code&gt;whenComplete&lt;/code&gt;, but it also raised the question of what would happen in the exceptional case, and why do these two seemingly similar methods even exist?&lt;/p&gt;
+&lt;p&gt;The answer here is somewhat that they handle errors differently. If we look at the &lt;em&gt;totally clear&lt;/em&gt; JavaDocs for &lt;code&gt;handle&lt;/code&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When this stage is complete, the given function is invoked with the result (or null if none) and the exception (or null if none) of this stage as arguments, and the function&amp;rsquo;s result is used to complete the returned stage.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;and for &lt;code&gt;whenComplete&lt;/code&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When this stage is complete, the given action is invoked with the result (or null if none) and the exception (or null if none) of this stage as arguments. The returned stage is completed when the action returns. If the supplied action itself encounters an exception, then the returned stage exceptionally completes with this exception unless this stage also completed exceptionally.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It&amp;rsquo;s totally clear what happens right? I mean from reading those two blurbs I&amp;rsquo;m sure you could easily predict the result of this snippet:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;supplyAsync&lt;/span&gt;(() &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;whenComplete&lt;/span&gt;((i, err) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;hello&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;join&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You might assume that you&amp;rsquo;d get back &lt;code&gt;RuntimeException(&amp;quot;2&amp;quot;)&lt;/code&gt; since thats the last thing thrown in the chain, and it seems like &lt;code&gt;whenComplete&lt;/code&gt; takes in an error, so that&amp;rsquo;s probably not just hanging around, right? Well, if we run the code we see:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;hello
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Exception in thread &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;main&amp;#34;&lt;/span&gt; java.&lt;span style=&#34;color:#a6e22e&#34;&gt;util&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;concurrent&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;CompletionException&lt;/span&gt;: java.&lt;span style=&#34;color:#a6e22e&#34;&gt;lang&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RuntimeException&lt;/span&gt;: 1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	at java.&lt;span style=&#34;color:#a6e22e&#34;&gt;util&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;concurrent&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;CompletableFuture&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;encodeThrowable&lt;/span&gt;(CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;java&lt;/span&gt;:273)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	at java.&lt;span style=&#34;color:#a6e22e&#34;&gt;util&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;concurrent&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;CompletableFuture&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;completeThrowable&lt;/span&gt;(CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;java&lt;/span&gt;:280)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	at java.&lt;span style=&#34;color:#a6e22e&#34;&gt;util&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;concurrent&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;CompletableFuture$AsyncSupply&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;run&lt;/span&gt;(CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;java&lt;/span&gt;:1592)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;What even happened here to see this output? We see &lt;code&gt;hello&lt;/code&gt;, so we know that the code from the &lt;code&gt;whenComplete&lt;/code&gt; block executed, but that exception looks like it&amp;rsquo;s from the &lt;code&gt;supplyAsync&lt;/code&gt; call. So not only did our second exception simply disappear, but &lt;code&gt;whenComplete&lt;/code&gt; also wrapped our inital exception in a &lt;code&gt;CompletionException&lt;/code&gt;. Fantastic.&lt;/p&gt;
+&lt;p&gt;Imagine if we had wanted to handle that error somehow, and done something like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;CompletableFuture.&lt;span style=&#34;color:#a6e22e&#34;&gt;supplyAsync&lt;/span&gt;(() &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; RuntimeException(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; 1;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;whenComplete&lt;/span&gt;((i, err) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (err &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; IllegalArgumentException(err.&lt;span style=&#34;color:#a6e22e&#34;&gt;getMessage&lt;/span&gt;());
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}).&lt;span style=&#34;color:#a6e22e&#34;&gt;join&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Well again, all we&amp;rsquo;re going to get back is our original exception:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Exception in thread &amp;#34;main&amp;#34; java.util.concurrent.CompletionException: java.lang.RuntimeException: 1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;So what did we learn?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;There doesn&amp;rsquo;t seem to be a great way to handle exceptions while returning &lt;code&gt;CompletableFuture&amp;lt;Void&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;If we want to actually handle any errors specially, we need to use &lt;code&gt;handle&lt;/code&gt; which explicitly doesn&amp;rsquo;t propagate errors for us, instead allowing us to take action on errors explicitly. This means we can either squash them, or propagate changed versions of them.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;CompletionException&lt;/code&gt;s are basically going to spring up in our code when using &lt;code&gt;CompletableFuture&lt;/code&gt;s and there&amp;rsquo;s not a whole lot we can do about it, besides liberally using &lt;code&gt;handle&lt;/code&gt;? We can also use &lt;code&gt;exceptionally&lt;/code&gt; to deal with this problem, but we can save that for another post.&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>//localhost:1313/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//localhost:1313/about/</guid>
+      <description>&lt;p&gt;Nat Dempkowski&lt;/p&gt;</description>
+      <content>&lt;p&gt;Nat Dempkowski&lt;/p&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

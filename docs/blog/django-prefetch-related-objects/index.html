@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600">
+<title>Django Prefetch Related Objects: Why Am I Still Seeing N&#43;1 Queries with prefetch_related_objects? | Nat Dempkowski</title>
+
+      <link rel="stylesheet" href="/css/main.min.9e935347cabf09fcce7a9570cc2418be8c438b6e6f0b790d6aafd386a3593635.css" integrity="sha256-npNTR8q/CfzOepVwzCQYvoxDi25vC3kNaq/ThqNZNjU=" crossorigin="anonymous">
+  <link
+    rel="stylesheet"
+    href="/css/rose-pine-dawn.min.css"
+  />
+
+
+      <script src="/js/main.1bffe29b0ec944986a53ad7ad99ac4eb443c930843f81abf08828836bbc0dd52.js" integrity="sha256-G//imw7JRJhqU6162ZrE60Q8kwhD&#43;Bq/CIKINrvA3VI=" crossorigin="anonymous"></script>
+  
+  
+
+  
+  
+  
+
+
+</head>
+<body>
+  <header>
+    <div>
+      <h1><a href="/">Nat Dempkowski</a></h1>
+
+
+    </div>
+  </header>
+  <main class="content-wrapper">
+    <article class="content-container">
+      
+  <h1>Django Prefetch Related Objects: Why Am I Still Seeing N&#43;1 Queries with prefetch_related_objects?</h1>
+
+  
+  
+  <time datetime="2025-02-02T15:05:41-05:00">February 2, 2025</time>
+
+  <p>I&rsquo;ve been working on a project that uses Django&rsquo;s ORM heavily and running into a lot of N+1 queries. An N+1 query is a side effect of the &ldquo;magic&rdquo; (runtime binding/resolution &#x1f644;) that the Django ORM enables where accessing fields on a <code>Model</code> that correspond to other related models.</p>
+<p>This means you can easily write code like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#575279;background-color:#faf4ed;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#286983">for</span> <span style="color:#d7827e">book</span> <span style="color:#797593">in</span> <span style="color:#d7827e">Book</span><span style="color:#797593">.</span><span style="color:#d7827e">objects</span><span style="color:#797593">.</span><span style="color:#d7827e">all</span><span style="color:#797593">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">print</span><span style="color:#797593">(</span><span style="color:#d7827e">book</span><span style="color:#797593">.</span><span style="color:#d7827e">author</span><span style="color:#797593">)</span>
+</span></span></code></pre></div><p>This lets you easily access related objects, here assuming that book and author are modeled as two related objects with a DB-layer relationship between them. This is &ldquo;desirable&rdquo; behavior because it makes writing your application code &ldquo;easier&rdquo;.</p>
+<p>The huge downside to being able to easily do this, is that the details of when you make a database query are hidden from you, making it easy to accidentally write a lot of sequential database queries as your application code, and models grow in complexity. These repeated queries are the &ldquo;N+1 queries&rdquo; and often result in poorer performance compared to writing a single database query that fetches all the related objects.</p>
+<p>Django&rsquo;s solution to this problem is &ldquo;prefetching&rdquo;. Prefetching to me is a bit of a weird way to describe this, as this is just regular data fetching compared to the default lazy-fetching behavior, but hey. There are a few ways you can do this depending on your input data. The two that are often used together are <code>prefetch_related_objects</code> and the <code>Prefetch(...)</code> class which offers you more control over how the prefetched-related query is attached to your original objects.</p>
+<p>You probably would end up writing some code at some point like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#575279;background-color:#faf4ed;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#d7827e">books</span> <span style="color:#797593">=</span> <span style="color:#d7827e">Book</span><span style="color:#797593">.</span><span style="color:#d7827e">objects</span><span style="color:#797593">.</span><span style="color:#d7827e">all</span><span style="color:#797593">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#d7827e">prefetch_related_objects</span><span style="color:#797593">(</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d7827e">books</span><span style="color:#797593">,</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#ea9d34">&#39;author&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d7827e">Prefetch</span><span style="color:#797593">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ea9d34">&#39;fans&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">queryset</span><span style="color:#797593">=</span><span style="color:#d7827e">Fan</span><span style="color:#797593">.</span><span style="color:#d7827e">objects</span><span style="color:#797593">.</span><span style="color:#d7827e">filter</span><span style="color:#797593">(</span><span style="color:#d7827e">followers__gt</span><span style="color:#797593">=</span><span style="color:#ea9d34">100</span><span style="color:#797593">),</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">to_attr</span><span style="color:#797593">=</span><span style="color:#ea9d34">&#39;popular_fans&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#797593">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ea9d34">&#39;popular_fans__favorite_book&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ea9d34">&#39;popular_fans__followers&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span><span style="color:#797593">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#286983">for</span> <span style="color:#d7827e">book</span> <span style="color:#797593">in</span> <span style="color:#d7827e">books</span><span style="color:#797593">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">print</span><span style="color:#797593">(</span><span style="color:#d7827e">book</span><span style="color:#797593">.</span><span style="color:#d7827e">author</span><span style="color:#797593">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">print</span><span style="color:#797593">(</span><span style="color:#d7827e">book</span><span style="color:#797593">.</span><span style="color:#d7827e">popular_fans</span><span style="color:#797593">.</span><span style="color:#d7827e">favorite_book</span><span style="color:#797593">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#9893a5"># etc.</span>
+</span></span></code></pre></div><p>The idea being that you want to compute some custom field that might be some object with other related objects, and efficientlly prefetch the related objects to that sub-field to avoid N+1 queries. You would imagine here we&rsquo;d get a justifiable number of queries each fetching a relevant set of many objects:</p>
+<ul>
+<li><code>Books</code></li>
+<li><code>Books.authors</code></li>
+<li><code>Books.popular_fans</code></li>
+<li><code>Books.popular_fans.favorite_book</code></li>
+<li><code>Books.popular_fans.followers</code></li>
+</ul>
+<p>This is relatively justifiable for what we&rsquo;re doing here which is querying for a core set of data, hydrating a few related objects, and then joining them onto the core object in memory.</p>
+<p>The unexpected problem here is that this doesn&rsquo;t work as you might expect. Here the prefetches for <code>popular_fans__favorite_book</code> and <code>popular_fans__followers</code> will not be included in the original query, and you will end up with some N+1 queries for each of the attributes of <code>popular_fans</code> that you explictly tried to prefetch.</p>
+<p>To fix this, you instead must bundle the prefetches into the <code>Prefetch</code> object like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#575279;background-color:#faf4ed;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#d7827e">prefetch_related_objects</span><span style="color:#797593">(</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d7827e">books</span><span style="color:#797593">,</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#ea9d34">&#39;author&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d7827e">Prefetch</span><span style="color:#797593">(</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ea9d34">&#39;fans&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ea9d34">&#39;fans__favorite_book&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ea9d34">&#39;fans__followers&#39;</span><span style="color:#797593">,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">queryset</span><span style="color:#797593">=</span><span style="color:#d7827e">Fan</span><span style="color:#797593">.</span><span style="color:#d7827e">objects</span><span style="color:#797593">.</span><span style="color:#d7827e">filter</span><span style="color:#797593">(</span><span style="color:#d7827e">followers__gt</span><span style="color:#797593">=</span><span style="color:#ea9d34">100</span><span style="color:#797593">),</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d7827e">to_attr</span><span style="color:#797593">=</span><span style="color:#ea9d34">&#39;popular_fans&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#797593">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#797593">)</span>
+</span></span></code></pre></div><p>This will result in the queries we expected above, with one bulk query for each of the related object types.</p>
+<p>As for exactly why the first approach doesn&rsquo;t work, and why these two aren&rsquo;t just equivalent, I&rsquo;m not sure. This isn&rsquo;t really documented anywhere I could easily find, and I haven&rsquo;t dug into the source code yet to figure out why exactly this doesn&rsquo;t work.</p>
+<p>To me this is a classic example of a place where the &ldquo;helpful&rdquo; ORM gets in the way and causes a couple of subtler and harder to debug and understand issues than the core problem it is solving. The better approach is probably to just write explicit SQL and rely only on an object mapper, rather than a full-blown ORM for querying so you can actually keep track of what is going on without subtle performance footguns.</p>
+
+  
+
+
+    </article>
+  </main>
+  <footer>
+    <div>
+      
+<p>Copyright 2025. All rights reserved.</p>
+
+
+    </div>
+  </footer>
+</body>
+</html>

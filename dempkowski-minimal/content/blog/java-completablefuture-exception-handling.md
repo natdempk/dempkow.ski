@@ -69,9 +69,9 @@ You might assume that you'd get back `RuntimeException("2")` since thats the las
 ```java
 hello
 Exception in thread "main" java.util.concurrent.CompletionException: java.lang.RuntimeException: 1
-	at java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:273)
-	at java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:280)
-	at java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1592)
+  at java.util.concurrent.CompletableFuture.encodeThrowable(CompletableFuture.java:273)
+  at java.util.concurrent.CompletableFuture.completeThrowable(CompletableFuture.java:280)
+  at java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1592)
 ```
 
 What even happened here to see this output? We see `hello`, so we know that the code from the `whenComplete` block executed, but that exception looks like it's from the `supplyAsync` call. So not only did our second exception simply disappear, but `whenComplete` also wrapped our inital exception in a `CompletionException`. Fantastic.
@@ -91,7 +91,7 @@ CompletableFuture.supplyAsync(() -> {
 
 Well again, all we're going to get back is our original exception:
 
-```
+```java
 Exception in thread "main" java.util.concurrent.CompletionException: java.lang.RuntimeException: 1
 ```
 

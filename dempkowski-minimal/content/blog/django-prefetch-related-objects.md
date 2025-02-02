@@ -50,7 +50,7 @@ The idea being that you want to compute some custom field that might be some obj
 - `Books.popular_fans.favorite_book`
 - `Books.popular_fans.followers`
 
-This are relatively justifiable for what we're doing here which is querying for a core set of data, hydrating a few related objects, and then joining them onto the core object in memory.
+This is relatively justifiable for what we're doing here which is querying for a core set of data, hydrating a few related objects, and then joining them onto the core object in memory.
 
 The unexpected problem here is that this doesn't work as you might expect. Here the prefetches for `popular_fans__favorite_book` and `popular_fans__followers` will not be included in the original query, and you will end up with some N+1 queries for each of the attributes of `popular_fans` that you explictly tried to prefetch.
 
@@ -72,6 +72,6 @@ prefetch_related_objects(
 
 This will result in the queries we expected above, with one bulk query for each of the related object types.
 
-As for exactly why the first approach doesn't work, and why these two aren't just equivalent, I'm not sure. This isn't really documented anywhere.
+As for exactly why the first approach doesn't work, and why these two aren't just equivalent, I'm not sure. This isn't really documented anywhere I could easily find, and I haven't dug into the source code yet to figure out why exactly this doesn't work.
 
-To me this is a classic example of a place where the "helpful" ORM gets in the way and causes a couple of subtler and harder to debug and understand issue than the core problem it is solving. The better approach is probably to just write explicit SQL and rely only on an object mapper, rather than a full-blown ORM for querying so you can actually keep track of what is going on without subtle performance footguns.
+To me this is a classic example of a place where the "helpful" ORM gets in the way and causes a couple of subtler and harder to debug and understand issues than the core problem it is solving. The better approach is probably to just write explicit SQL and rely only on an object mapper, rather than a full-blown ORM for querying so you can actually keep track of what is going on without subtle performance footguns.

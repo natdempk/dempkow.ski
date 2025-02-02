@@ -12,10 +12,12 @@
   <main class="content-wrapper">
     <article class="content-container">
       {{ block "main" . }}{{ end }}
-    <section>
-      {{ partial "footer.html" . }}
-    </section>
     </article>
   </main>
+  <footer>
+    <div>
+      {{ partial "footer.html" . }}
+    </div>
+  </footer>
 </body>
 </html>

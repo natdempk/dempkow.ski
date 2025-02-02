@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600">
 <title>Django Prefetch Related Objects: Why Am I Still Seeing N&#43;1 Queries with prefetch_related_objects? | Nat Dempkowski</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+      <link rel="stylesheet" href="/css/main.min.9e935347cabf09fcce7a9570cc2418be8c438b6e6f0b790d6aafd386a3593635.css" integrity="sha256-npNTR8q/CfzOepVwzCQYvoxDi25vC3kNaq/ThqNZNjU=" crossorigin="anonymous">
   <link
     rel="stylesheet"
     href="/css/rose-pine-dawn.min.css"
   />
 
 
-      <script src="/js/main.js"></script>
+      <script src="/js/main.1bffe29b0ec944986a53ad7ad99ac4eb443c930843f81abf08828836bbc0dd52.js" integrity="sha256-G//imw7JRJhqU6162ZrE60Q8kwhD&#43;Bq/CIKINrvA3VI=" crossorigin="anonymous"></script>
   
   
 
@@ -76,7 +77,7 @@
 <li><code>Books.popular_fans.favorite_book</code></li>
 <li><code>Books.popular_fans.followers</code></li>
 </ul>
-<p>This are relatively justifiable for what we&rsquo;re doing here which is querying for a core set of data, hydrating a few related objects, and then joining them onto the core object in memory.</p>
+<p>This is relatively justifiable for what we&rsquo;re doing here which is querying for a core set of data, hydrating a few related objects, and then joining them onto the core object in memory.</p>
 <p>The unexpected problem here is that this doesn&rsquo;t work as you might expect. Here the prefetches for <code>popular_fans__favorite_book</code> and <code>popular_fans__followers</code> will not be included in the original query, and you will end up with some N+1 queries for each of the attributes of <code>popular_fans</code> that you explictly tried to prefetch.</p>
 <p>To fix this, you instead must bundle the prefetches into the <code>Prefetch</code> object like:</p>
 <div class="highlight"><pre tabindex="0" style="color:#575279;background-color:#faf4ed;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#d7827e">prefetch_related_objects</span><span style="color:#797593">(</span>
@@ -91,18 +92,21 @@
 </span></span><span style="display:flex;"><span>  <span style="color:#797593">)</span>
 </span></span><span style="display:flex;"><span><span style="color:#797593">)</span>
 </span></span></code></pre></div><p>This will result in the queries we expected above, with one bulk query for each of the related object types.</p>
-<p>As for exactly why the first approach doesn&rsquo;t work, and why these two aren&rsquo;t just equivalent, I&rsquo;m not sure. This isn&rsquo;t really documented anywhere.</p>
-<p>To me this is a classic example of a place where the &ldquo;helpful&rdquo; ORM gets in the way and causes a couple of subtler and harder to debug and understand issue than the core problem it is solving. The better approach is probably to just write explicit SQL and rely only on an object mapper, rather than a full-blown ORM for querying so you can actually keep track of what is going on without subtle performance footguns.</p>
+<p>As for exactly why the first approach doesn&rsquo;t work, and why these two aren&rsquo;t just equivalent, I&rsquo;m not sure. This isn&rsquo;t really documented anywhere I could easily find, and I haven&rsquo;t dug into the source code yet to figure out why exactly this doesn&rsquo;t work.</p>
+<p>To me this is a classic example of a place where the &ldquo;helpful&rdquo; ORM gets in the way and causes a couple of subtler and harder to debug and understand issues than the core problem it is solving. The better approach is probably to just write explicit SQL and rely only on an object mapper, rather than a full-blown ORM for querying so you can actually keep track of what is going on without subtle performance footguns.</p>
 
   
 
 
-    <section>
-      <p>Copyright 2025. All rights reserved.</p>
-
-
-    </section>
     </article>
   </main>
+  <footer>
+    <div>
+      
+<p>Copyright 2025. All rights reserved.</p>
+
+
+    </div>
+  </footer>
 </body>
 </html>

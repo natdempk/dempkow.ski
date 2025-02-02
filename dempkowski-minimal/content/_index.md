@@ -4,7 +4,7 @@ date = 2023-01-01T08:00:00-07:00
 draft = false
 +++
 
-Hi, I'm Nat Dempkowski a software engineer living in Boston.
+Hi, I'm Nat Dempkowski, a software engineer living in Boston.
 
 I'm currently working at [Suno](https://suno.com) on all things engineering, especially focused on backend and infrastructure. I enjoy solving problems that blend product challenges with engineering at scale.
 

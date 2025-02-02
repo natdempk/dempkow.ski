@@ -1,0 +1,27 @@
+{{ define "main" }}
+  <section>
+    {{ .Content }}
+  </section>
+  <section>
+    <h3>Posts</h3>
+    <ul>
+    {{ range site.RegularPages }}
+      <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{/*  {{ .Summary }}  */}}
+    {{ end }}
+    </ul>
+    <h3>Other Writing</h3>
+    <p>I wrote a chapter of <a href="http://dist-prog-book.com/chapter/3/message-passing.html">Programming Models for Distributed Computing about Message Passing and the Actor Model</a>.</p>
+  </section>
+  <section>
+    <h3>Elsewhere</h3>
+    <ul>
+      <li><a href="https://github.com/natdempk">GitHub</a></li>
+      <li><a href="https://news.ycombinator.com/user?id=natdempk">Hacker News</a></li>
+      <li><a href="https://x.com/natdempk">X (Twitter)</a></li>
+      <li><a href="https://www.linkedin.com/in/nathaniel-dempkowski-b5255166/">LinkedIn</a></li>
+      <li><a href="mailto:natdempk@gmail.com">Email</a></li>
+    </ul>
+    <p>The best way to contact me is <a href="mailto:natdempk@gmail.com">via email</a>.</p>
+  </section>
+{{ end }}

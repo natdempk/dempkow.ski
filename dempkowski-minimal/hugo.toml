@@ -1,0 +1,15 @@
+baseURL = 'https://dempkow.ski/'
+languageCode = 'en-us'
+title = 'Nat Dempkowski'
+
+theme = 'dempkowski-theme'
+
+enableEmoji = true
+
+# contentTypeName = 'blog'
+# contentTypeBasePath = 'blog'
+
+[markup]
+  [markup.highlight]
+    style = 'rose-pine-dawn'
+
